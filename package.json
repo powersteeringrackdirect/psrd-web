@@ -1,0 +1,14 @@
+{
+  "name": "psrd-web",
+  "version": "2.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build":   "node generate-ssg.mjs",
+    "deploy":  "npx wrangler@3 pages deploy dist --project-name=psrd-web",
+    "release": "node generate-ssg.mjs && npx wrangler@3 pages deploy dist --project-name=psrd-web",
+    "sync":    "node download-assets.mjs"
+  }
+}

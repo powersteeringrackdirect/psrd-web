@@ -1,0 +1,2240 @@
+
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0e0f12">
+<title>PSRD — Product Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ───────────────────────────── tokens ───────────────────────────── */
+:root{
+  --bg:        #0e0f12;
+  --bg-1:      #14161b;
+  --bg-2:      #1a1d23;
+  --bg-3:      #21242b;
+  --line:      #23262d;
+  --line-2:    #2d3139;
+  --ink:       #e8eaee;
+  --ink-2:     #aeb3bd;
+  --ink-3:     #6b7280;
+  --ink-4:     #4b5160;
+  --accent:    #e8a951;
+  --accent-2:  #d49335;
+  --accent-w:  rgba(232,169,81,.10);
+  --ok:        #5ec888;
+  --ok-w:      rgba(94,200,136,.10);
+  --warn:      #e8a951;
+  --err:       #e87171;
+  --err-w:     rgba(232,113,113,.10);
+  --info:      #6aa9f0;
+  --info-w:    rgba(106,169,240,.10);
+  --violet:    #b187e8;
+  --violet-w:  rgba(177,135,232,.10);
+  --r-sm: 3px;
+  --r:    4px;
+  --r-lg: 6px;
+  --r-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow:    0 8px 24px rgba(0,0,0,.35);
+  --shadow-lg: 0 24px 60px rgba(0,0,0,.5);
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --h-header: 56px;
+  --h-action: 60px;
+  --w-sidebar: 300px;
+}
+/* ───────────────────────────── base ───────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:var(--font-sans);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent);text-decoration:none}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-4)}
+
+/* ───────────────────────────── shell ───────────────────────────── */
+#app{display:flex;flex-direction:column;height:100dvh}
+
+/* header */
+#header{
+  height:var(--h-header);
+  flex-shrink:0;
+  background:var(--bg-1);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;
+  padding:0 16px;gap:12px;
+  z-index:50;
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-mark{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--accent);color:#1a1206;
+  font-family:var(--font-mono);font-weight:700;font-size:13px;
+  display:grid;place-items:center;
+  letter-spacing:.02em;
+  flex-shrink:0;
+}
+.brand-text{
+  font-weight:600;font-size:14px;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.brand-text .muted{color:var(--ink-3);font-weight:400;margin-left:4px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.status{
+  display:flex;align-items:center;gap:7px;
+  font-size:12px;color:var(--ink-2);
+  padding:6px 10px;
+  border:1px solid var(--line);border-radius:var(--r-pill);
+  background:var(--bg-2);
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--ok);
+  box-shadow:0 0 0 3px rgba(94,200,136,.12);
+}
+.status.err .status-dot{background:var(--err);box-shadow:0 0 0 3px rgba(232,113,113,.12)}
+.status-text{display:none}
+@media (min-width:520px){.status-text{display:inline}}
+.icon-btn{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--bg-2);border:1px solid var(--line);
+  color:var(--ink-2);
+  display:grid;place-items:center;
+  transition:background .12s,border-color .12s,color .12s;
+}
+.icon-btn:hover{background:var(--bg-3);color:var(--ink);border-color:var(--line-2)}
+.icon-btn svg{width:16px;height:16px}
+.menu-btn{display:none}
+@media (max-width:880px){.menu-btn{display:grid}}
+
+/* body */
+#body{flex:1;display:flex;min-height:0;position:relative}
+
+/* sidebar */
+#sidebar{
+  width:var(--w-sidebar);flex-shrink:0;
+  background:var(--bg-1);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0;
+}
+.sidebar-head{
+  padding:14px 16px 12px;
+  border-bottom:1px solid var(--line);
+}
+.sidebar-label{
+  font-size:11px;font-weight:600;
+  color:var(--ink-3);
+  letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.count-badge{
+  font-family:var(--font-mono);font-size:10px;font-weight:500;
+  color:var(--ink-2);
+  background:var(--bg-3);border:1px solid var(--line);
+  padding:1px 6px;border-radius:var(--r-pill);
+  letter-spacing:0;text-transform:none;
+}
+.search-wrap{
+  position:relative;
+  display:flex;align-items:center;
+}
+.search-wrap svg{
+  position:absolute;left:10px;width:14px;height:14px;
+  color:var(--ink-4);pointer-events:none;
+}
+#search{
+  width:100%;
+  background:var(--bg-2);border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:9px 12px 9px 32px;
+  font-size:13px;color:var(--ink);
+  outline:none;
+  transition:border-color .12s, background .12s;
+}
+#search:focus{border-color:var(--accent);background:var(--bg-3)}
+#search::placeholder{color:var(--ink-4)}
+
+#prod-list{
+  flex:1;overflow-y:auto;
+  padding:8px;
+  -webkit-overflow-scrolling:touch;
+}
+.prod-card{
+  padding:11px 12px;
+  border-radius:var(--r);
+  border:1px solid transparent;
+  margin-bottom:2px;
+  cursor:pointer;
+  position:relative;
+  transition:background .1s;
+}
+.prod-card:hover{background:var(--bg-2)}
+.prod-card.active{background:var(--bg-2);border-color:var(--line-2)}
+.prod-card.active::before{
+  content:"";position:absolute;left:0;top:14px;bottom:14px;width:2px;
+  background:var(--accent);border-radius:0 2px 2px 0;
+}
+.prod-name{
+  font-size:13px;font-weight:500;line-height:1.35;
+  color:var(--ink);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.prod-sku{
+  font-family:var(--font-mono);font-size:11px;
+  color:var(--ink-3);margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.prod-badges{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+.badge{
+  font-size:10px;font-weight:600;letter-spacing:.03em;
+  padding:2px 7px;border-radius:var(--r-pill);
+  border:1px solid transparent;
+  white-space:nowrap;
+}
+.badge-new   {background:var(--ok-w);color:var(--ok);border-color:rgba(94,200,136,.25)}
+.badge-used  {background:var(--accent-w);color:var(--accent);border-color:rgba(232,169,81,.25)}
+.badge-rhd   {background:var(--info-w);color:var(--info);border-color:rgba(106,169,240,.25)}
+.badge-lhd   {background:var(--violet-w);color:var(--violet);border-color:rgba(177,135,232,.25)}
+
+.btn-new-product{
+  margin:8px;padding:11px;
+  border:1px dashed var(--line-2);
+  border-radius:var(--r);
+  color:var(--accent);
+  font-size:13px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:background .12s,border-color .12s;
+}
+.btn-new-product:hover{background:var(--accent-w);border-color:var(--accent)}
+
+/* editor */
+#editor{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+#editor-head{
+  height:56px;flex-shrink:0;
+  border-bottom:1px solid var(--line);
+  background:var(--bg-1);
+  padding:0 20px;
+  display:flex;align-items:center;gap:12px;
+}
+.back-btn{display:none}
+@media (max-width:880px){.back-btn{display:grid}}
+#editor-title{
+  flex:1;font-size:14px;font-weight:600;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:var(--ink);
+}
+.mode-pill{
+  font-size:11px;font-weight:600;
+  padding:3px 10px;border-radius:var(--r-pill);
+  border:1px solid transparent;
+}
+.mode-pill.edit{background:var(--info-w);color:var(--info);border-color:rgba(106,169,240,.25)}
+.mode-pill.new {background:var(--ok-w);color:var(--ok);border-color:rgba(94,200,136,.25)}
+
+#editor-scroll{
+  flex:1;overflow-y:auto;
+  padding:20px 24px calc(var(--h-action) + 32px);
+  -webkit-overflow-scrolling:touch;
+}
+@media (max-width:560px){
+  #editor-scroll{padding:14px 14px calc(var(--h-action) + 24px)}
+}
+
+/* empty */
+#empty{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  padding:24px;
+}
+.empty-mark{
+  width:64px;height:64px;border-radius:16px;
+  background:var(--bg-2);border:1px solid var(--line);
+  display:grid;place-items:center;
+  color:var(--ink-4);
+}
+.empty-mark svg{width:28px;height:28px}
+.empty-title{font-size:15px;font-weight:500;color:var(--ink-2)}
+.empty-sub{font-size:13px;color:var(--ink-4)}
+
+/* sections */
+.section{
+  background:var(--bg-1);
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  margin-bottom:12px;
+  overflow:hidden;
+}
+.section-head{
+  padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+  user-select:none;
+  transition:background .1s;
+}
+.section-head:hover{background:var(--bg-2)}
+.section-text{flex:1;min-width:0}
+.section-title{
+  font-size:13px;font-weight:600;
+  letter-spacing:.02em;
+  color:var(--ink);
+  text-transform:uppercase;
+}
+.section-sub{
+  font-size:12px;color:var(--ink-3);
+  margin-top:2px;font-weight:400;letter-spacing:0;text-transform:none;
+}
+.section .chev{
+  color:var(--ink-4);
+  transition:transform .2s;
+  flex-shrink:0;
+}
+.section .chev svg{width:16px;height:16px;display:block}
+.section.open .chev{transform:rotate(90deg)}
+.section-body{padding:4px 18px 18px;display:none}
+.section.open .section-body{display:block}
+@media (max-width:560px){
+  .section-head{padding:12px 14px}
+  .section-body{padding:4px 14px 14px}
+}
+
+/* fields */
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.label{
+  display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;
+  font-size:11px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-2);
+  margin-bottom:6px;
+}
+.label .req{color:var(--accent)}
+.label .hint{
+  font-weight:400;letter-spacing:0;text-transform:none;
+  color:var(--ink-4);font-size:11px;
+}
+input[type=text],input[type=number],input[type=url],input[type=password],textarea,select{
+  width:100%;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:10px 12px;
+  font-size:13.5px;
+  color:var(--ink);
+  outline:none;
+  transition:border-color .12s,background .12s;
+  -webkit-appearance:none;appearance:none;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);background:var(--bg-3)}
+input::placeholder,textarea::placeholder{color:var(--ink-4)}
+textarea{resize:vertical;min-height:80px;line-height:1.55}
+select{
+  cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23aeb3bd' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:34px;
+}
+
+/* mono fields */
+input.mono,textarea.mono{font-family:var(--font-mono);font-size:13px}
+
+/* grids */
+.row{display:grid;gap:12px}
+.row-2{grid-template-columns:1fr 1fr}
+.row-3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:640px){
+  .row-2,.row-3{grid-template-columns:1fr}
+}
+
+/* segmented toggle */
+.seg{
+  display:flex;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:3px;
+  gap:2px;
+}
+.seg button{
+  flex:1;padding:8px 10px;
+  font-size:12.5px;font-weight:500;
+  color:var(--ink-3);
+  border-radius:5px;
+  transition:background .12s,color .12s;
+}
+.seg button:hover{color:var(--ink)}
+.seg button.is-on{background:var(--bg-3);color:var(--ink);box-shadow:var(--shadow-sm)}
+.seg button.is-on-new{background:var(--ok-w);color:var(--ok)}
+.seg button.is-on-used{background:var(--accent-w);color:var(--accent)}
+.seg button.is-on-rhd{background:var(--info-w);color:var(--info)}
+.seg button.is-on-lhd{background:var(--violet-w);color:var(--violet)}
+
+/* brand grid */
+.brand-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(94px,1fr));
+  gap:5px;
+}
+.brand-pill{
+  padding:7px 9px;
+  background:var(--bg-2);border:1px solid var(--line);
+  border-radius:var(--r-sm);
+  font-size:12px;font-weight:500;color:var(--ink-2);
+  transition:background .1s,border-color .1s,color .1s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.brand-pill:hover{background:var(--bg-3);color:var(--ink)}
+.brand-pill.is-on{background:var(--accent-w);color:var(--accent);border-color:rgba(232,169,81,.45)}
+.brand-custom-row{display:flex;gap:6px;margin-top:6px}
+.brand-custom-row input{flex:1;display:none}
+.btn-link{
+  background:transparent;border:1px dashed var(--line-2);
+  border-radius:var(--r-sm);padding:6px 12px;
+  color:var(--ink-3);font-size:12px;
+  transition:color .12s,border-color .12s;
+}
+.btn-link:hover{color:var(--accent);border-color:var(--accent)}
+
+/* tag inputs */
+.tag-wrap{
+  background:var(--bg-2);border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:6px;
+  min-height:44px;
+  display:flex;flex-wrap:wrap;gap:5px;align-items:center;
+  cursor:text;
+  transition:border-color .12s,background .12s;
+}
+.tag-wrap:focus-within{border-color:var(--accent);background:var(--bg-3)}
+.tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--bg-3);border:1px solid var(--line-2);
+  border-radius:var(--r-sm);
+  padding:3px 4px 3px 9px;
+  font-family:var(--font-mono);font-size:12px;
+}
+.tag button{
+  width:18px;height:18px;border-radius:4px;
+  color:var(--ink-4);font-size:14px;
+  display:grid;place-items:center;
+  transition:background .1s,color .1s;
+}
+.tag button:hover{background:var(--err-w);color:var(--err)}
+.tag-input{
+  flex:1;min-width:120px;
+  background:transparent;border:0;outline:0;
+  padding:4px 6px;
+  font-family:var(--font-mono);font-size:12.5px;
+  color:var(--ink);
+}
+.tag-input::placeholder{color:var(--ink-4);font-family:var(--font-sans);font-style:italic}
+
+/* compat */
+.compat-list{display:flex;flex-direction:column;gap:8px}
+.compat-row{
+  display:grid;
+  grid-template-columns:1fr 1.4fr 1fr 0.7fr 0.7fr 34px;
+  gap:6px;align-items:center;
+}
+.compat-row input,.compat-row select{padding:7px 9px;font-size:12.5px}
+.compat-row select{padding-right:28px;background-position:right 8px center}
+.compat-headers{
+  display:grid;
+  grid-template-columns:1fr 1.4fr 1fr 0.7fr 0.7fr 34px;
+  gap:6px;
+  padding:0 4px;
+  font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-4);
+}
+@media (max-width:780px){
+  .compat-headers{display:none}
+  .compat-row{
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    padding:12px;
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:var(--r);
+    position:relative;
+  }
+  .compat-row > *:nth-child(1){grid-column:1/2}
+  .compat-row > *:nth-child(2){grid-column:2/3}
+  .compat-row > *:nth-child(3){grid-column:1/2}
+  .compat-row > *:nth-child(4){grid-column:2/3}
+  .compat-row > *:nth-child(5){grid-column:1/2}
+  .compat-row > *:nth-child(6){grid-column:2/3;justify-self:end}
+}
+.btn-rm{
+  width:32px;height:32px;border-radius:var(--r-sm);
+  background:transparent;border:1px solid var(--line);
+  color:var(--ink-4);
+  display:grid;place-items:center;
+  transition:background .12s,color .12s,border-color .12s;
+}
+
+/* delivery rows reuse compat-row grid */
+.delivery-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr 34px;
+  gap:6px;align-items:center;
+}
+.delivery-row input{padding:7px 9px;font-size:12.5px}
+
+/* badge editor */
+.badge-edit-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:10px;
+}
+/* badge preview (read-only) */
+.badge-preview{
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:14px 16px;
+}
+.badge-preview-row{
+  display:flex;flex-wrap:wrap;gap:7px;
+}
+.badge-preview .swatch{
+  font-size:11.5px;
+  padding:4px 11px;
+  cursor:default;
+  user-select:none;
+}
+.badge-preview-note{
+  font-size:11.5px;color:var(--ink-4);
+  margin-top:10px;
+  line-height:1.5;
+}
+.badge-preview-note strong{color:var(--ink-2);font-weight:600}
+.badge-preview-note em{font-style:normal;color:var(--accent)}
+.badge-edit{
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:11px 12px 12px;
+  display:flex;flex-direction:column;gap:7px;
+}
+.badge-edit .be-row{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.badge-edit .be-lbl{
+  font-size:10px;font-weight:700;letter-spacing:.08em;
+  color:var(--ink-3);text-transform:uppercase;
+}
+.badge-edit .be-auto{
+  font-size:9.5px;font-weight:600;
+  color:var(--ink-4);
+  background:var(--bg-3);
+  padding:1px 6px;border-radius:var(--r-pill);
+  border:1px solid var(--line);
+  letter-spacing:.04em;
+}
+.badge-edit input{
+  width:100%;background:var(--bg-3);
+  border:1px solid var(--line);
+  border-radius:var(--r-sm);
+  padding:7px 10px;
+  font-size:12.5px;color:var(--ink);
+  outline:none;
+}
+.badge-edit input:focus{border-color:var(--accent)}
+.badge-edit input[readonly]{color:var(--ink-2);cursor:default;background:var(--bg-2)}
+.badge-edit .swatch{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;
+  padding:3px 9px;border-radius:var(--r-pill);
+  border:1px solid transparent;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.badge-edit .swatch::before{
+  content:"";width:5px;height:5px;border-radius:50%;
+  background:currentColor;box-shadow:0 0 6px currentColor;
+}
+.badge-edit .swatch.sw-tax{background:rgba(255,255,255,.04);color:var(--ink-2);border-color:var(--line-2)}
+.badge-edit .swatch.sw-used{background:var(--accent-w);color:var(--accent);border-color:rgba(232,169,81,.32)}
+.badge-edit .swatch.sw-new{background:var(--ok-w);color:var(--ok);border-color:rgba(94,200,136,.32)}
+.badge-edit .swatch.sw-cyan{background:rgba(34,211,238,.13);color:#22d3ee;border-color:rgba(34,211,238,.32)}
+.badge-edit .swatch.sw-rhd{background:var(--info-w);color:var(--info);border-color:rgba(106,169,240,.32)}
+.badge-edit .swatch.sw-lhd{background:var(--violet-w);color:var(--violet);border-color:rgba(177,135,232,.32)}
+.badge-edit .swatch.sw-pink{background:rgba(244,114,182,.13);color:#f472b6;border-color:rgba(244,114,182,.32)}
+.action-hint{
+  font-size:11px;
+  color:var(--ink-4);
+  margin-top:5px;
+  display:flex;align-items:center;gap:4px;
+  font-style:italic;
+  line-height:1.4;
+}
+.action-hint::before{
+  content:"→";
+  font-style:normal;
+  color:var(--accent);
+  font-weight:700;
+}
+@media (max-width:780px){
+  .delivery-row{
+    grid-template-columns:1fr 1fr;
+    gap:8px;padding:12px;
+    background:var(--bg-2);border:1px solid var(--line);
+    border-radius:var(--r);
+  }
+  .delivery-row > *:last-child{grid-column:2/3;justify-self:end}
+}
+.btn-rm:hover{background:var(--err-w);color:var(--err);border-color:var(--err)}
+.btn-rm svg{width:14px;height:14px}
+.btn-add{
+  width:100%;padding:9px;
+  background:transparent;border:1px dashed var(--line-2);
+  border-radius:var(--r);
+  color:var(--ink-3);font-size:12.5px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  margin-top:8px;
+  transition:color .12s,border-color .12s,background .12s;
+}
+.btn-add:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-w)}
+
+/* images */
+.proc-bar{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  margin-bottom:12px;
+}
+.ps-seg{
+  display:flex;background:var(--bg-2);border:1px solid var(--line);
+  border-radius:var(--r);padding:2px;gap:1px;
+}
+.ps-seg button{padding:5px 11px;font-size:11.5px;font-weight:500;color:var(--ink-3);border-radius:4px}
+.ps-seg button.is-on{background:var(--bg-3);color:var(--ink)}
+.btn-proc{
+  padding:7px 13px;
+  background:var(--bg-2);border:1px solid var(--line-2);
+  border-radius:var(--r-sm);
+  color:var(--ink-2);font-size:12px;font-weight:500;
+  transition:background .12s,color .12s,border-color .12s;
+}
+.btn-proc:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-w)}
+.drop-zone{
+  position:relative;
+  border:1.5px dashed var(--line-2);
+  border-radius:var(--r-lg);
+  padding:28px 20px;
+  text-align:center;
+  transition:border-color .15s,background .15s;
+  cursor:pointer;
+}
+.drop-zone:hover,.drop-zone.is-over{border-color:var(--accent);background:var(--accent-w)}
+.drop-zone-icon{
+  width:36px;height:36px;margin:0 auto 8px;
+  border-radius:9px;
+  background:var(--bg-2);border:1px solid var(--line);
+  display:grid;place-items:center;
+  color:var(--ink-3);
+}
+.drop-zone-icon svg{width:18px;height:18px}
+.drop-zone-text{font-size:13px;color:var(--ink-2);font-weight:500}
+.drop-zone-sub{font-size:11.5px;color:var(--ink-4);margin-top:4px;font-family:var(--font-mono)}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.image-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:10px;margin-top:12px;
+}
+.img-card{
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  overflow:hidden;
+  position:relative;
+}
+.img-card.featured{border-color:var(--accent)}
+.img-card.featured::after{
+  content:"★ Featured";
+  position:absolute;top:6px;left:6px;
+  font-size:10px;font-weight:600;
+  background:var(--accent);color:#1a1206;
+  padding:2px 8px;border-radius:var(--r-pill);
+}
+.img-thumb{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.img-body{padding:8px}
+.img-alt{
+  width:100%;background:var(--bg-3);border:1px solid var(--line);
+  border-radius:var(--r-sm);padding:5px 8px;
+  font-size:11.5px;color:var(--ink);
+  margin-bottom:6px;
+}
+.img-acts{display:flex;gap:5px}
+.img-btn{
+  flex:0 0 auto;
+  width:30px;height:30px;
+  padding:0;
+  background:var(--bg-3);border:1px solid var(--line);
+  border-radius:var(--r-sm);
+  color:var(--ink-3);
+  display:grid;place-items:center;
+}
+.img-btn svg{display:block}
+.img-btn:hover{color:var(--ink)}
+.img-btn.danger:hover{color:var(--err);border-color:var(--err);background:var(--err-w)}
+.img-btn.is-on{color:var(--accent);border-color:var(--accent);background:var(--accent-w)}
+.img-btn.is-on svg{fill:currentColor}
+
+/* SEO */
+.char-count{
+  text-align:right;font-family:var(--font-mono);font-size:11px;
+  color:var(--ink-4);margin-top:4px;
+}
+.char-count.warn{color:var(--warn)}
+.char-count.over{color:var(--err)}
+.seo-preview{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:14px 16px;margin-top:12px;
+}
+.seo-preview-url{font-family:var(--font-mono);font-size:11.5px;color:var(--ok);margin-bottom:3px}
+.seo-preview-title{font-size:16px;color:var(--info);margin-bottom:3px}
+.seo-preview-desc{font-size:12.5px;color:var(--ink-3);line-height:1.45}
+
+/* action bar */
+#actions{
+  height:var(--h-action);
+  flex-shrink:0;
+  background:var(--bg-1);
+  border-top:1px solid var(--line);
+  display:flex;align-items:center;
+  padding:0 16px;gap:8px;
+  z-index:30;
+}
+#publish-status{
+  flex:1;font-size:12px;color:var(--ink-3);
+  font-family:var(--font-mono);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#publish-status.ok{color:var(--ok)}
+#publish-status.err{color:var(--err)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 14px;border-radius:var(--r);
+  font-size:13px;font-weight:600;
+  border:1px solid transparent;
+  transition:background .12s,color .12s,border-color .12s,opacity .12s;
+  white-space:nowrap;
+}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:var(--bg-2);color:var(--ink-2);border-color:var(--line)}
+.btn-ghost:hover{background:var(--bg-3);color:var(--ink);border-color:var(--line-2)}
+.btn-primary{background:var(--accent);color:#1a1206}
+.btn-primary:hover{background:var(--accent-2)}
+.btn-icon-only{padding:9px;width:38px}
+.btn svg{width:14px;height:14px}
+.action-labels{display:none}
+@media (min-width:780px){
+  .action-labels{display:inline}
+  .btn-icon-only{width:auto;padding:9px 14px}
+}
+@media (max-width:780px){
+  #publish-status{display:none}
+  #actions{padding:0 12px;gap:6px}
+  .btn{padding:9px 12px;font-size:12.5px}
+  .btn-icon-only{padding:9px;width:38px}
+}
+
+/* mobile sidebar drawer */
+#scrim{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:80;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+@media (max-width:880px){
+  #sidebar{
+    position:fixed;top:var(--h-header);left:0;bottom:0;
+    z-index:90;
+    transform:translateX(-100%);
+    transition:transform .25s ease-out;
+    width:min(86vw,340px);
+    box-shadow:var(--shadow-lg);
+  }
+  #sidebar.is-open{transform:translateX(0)}
+  #scrim.is-open{opacity:1;pointer-events:auto}
+  /* editor hides when sidebar list is showing list-mode */
+  body.list-mode #editor{display:none}
+}
+@media (min-width:881px){
+  #editor-head .back-btn{display:none}
+  body.list-mode #editor{display:flex}
+}
+
+/* modals */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+  z-index:200;
+  display:none;align-items:center;justify-content:center;
+  padding:16px;
+}
+.modal-overlay.is-open{display:flex}
+.modal{
+  background:var(--bg-1);
+  border:1px solid var(--line-2);
+  border-radius:var(--r-lg);
+  padding:24px;width:460px;max-width:100%;
+  box-shadow:var(--shadow-lg);
+  max-height:calc(100dvh - 32px);
+  overflow-y:auto;
+}
+.modal-overlay.is-open .modal{transform:translateY(0)}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--ink-3);margin-bottom:18px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.modal-btns .btn{padding:9px 16px}
+
+/* toast */
+.toast{
+  position:fixed;bottom:calc(var(--h-action) + 16px);right:16px;
+  padding:10px 14px;
+  background:var(--bg-2);border:1px solid var(--line-2);
+  border-radius:var(--r);
+  font-size:13px;
+  box-shadow:var(--shadow);
+  z-index:300;
+  opacity:0;transform:translateY(8px);
+  transition:opacity .25s, transform .25s;
+  pointer-events:none;
+  max-width:calc(100vw - 32px);
+}
+.toast.is-show{opacity:1;transform:translateY(0)}
+.toast.ok{border-color:rgba(94,200,136,.4);color:var(--ok)}
+.toast.err{border-color:rgba(232,113,113,.4);color:var(--err)}
+.toast.info{border-color:rgba(106,169,240,.4);color:var(--info)}
+
+/* spinner */
+.spinner{
+  display:inline-block;width:14px;height:14px;
+  border:2px solid var(--line-2);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* publish steps */
+.steps{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.step{display:flex;align-items:center;gap:12px;font-size:13px}
+.step-dot{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--bg-3);border:1px solid var(--line-2);
+  font-size:11px;font-weight:600;
+  display:grid;place-items:center;
+  color:var(--ink-3);flex-shrink:0;
+  transition:all .2s;
+}
+.step-dot.active{background:var(--info);border-color:var(--info);color:#fff;animation:pulse 1.2s infinite}
+.step-dot.done  {background:var(--ok);border-color:var(--ok);color:#1a1206}
+.step-dot.err   {background:var(--err);border-color:var(--err);color:#fff}
+.step-lbl{color:var(--ink-3)}
+.step-lbl.active{color:var(--ink)}
+.step-lbl.done{color:var(--ok)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+</style>
+</head>
+<body class="list-mode">
+
+<!-- ───────────── icons ───────────── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></symbol>
+  </defs>
+</svg>
+
+<div id="app">
+  <!-- ─────────── header ─────────── -->
+  <header id="header">
+    <button class="icon-btn menu-btn" onclick="toggleSidebar()" aria-label="Menu"><svg><use href="#i-menu"/></svg></button>
+    <div class="brand">
+      <div class="brand-mark">P</div>
+      <div class="brand-text">PSRD<span class="muted">/ Product Manager</span></div>
+    </div>
+    <div class="header-right">
+      <div class="status" id="status">
+        <span class="status-dot"></span>
+        <span class="status-text" id="status-text">Connected</span>
+      </div>
+      <button class="icon-btn" onclick="openModal('settings-modal')" aria-label="Settings"><svg><use href="#i-settings"/></svg></button>
+      <button class="icon-btn" onclick="refreshProducts()" aria-label="Refresh"><svg><use href="#i-refresh"/></svg></button>
+    </div>
+  </header>
+
+  <!-- ─────────── body ─────────── -->
+  <div id="body">
+    <!-- sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-head">
+        <div class="sidebar-label">
+          <span>Products</span>
+          <span class="count-badge" id="list-count">—</span>
+        </div>
+        <div class="search-wrap">
+          <svg><use href="#i-search"/></svg>
+          <input id="search" type="search" placeholder="Search name or part number…" oninput="filterProducts()">
+        </div>
+      </div>
+      <div id="prod-list"></div>
+      <button class="btn-new-product" onclick="newProduct()">
+        <svg width="14" height="14"><use href="#i-plus"/></svg>
+        Add new product
+      </button>
+    </aside>
+
+    <!-- editor -->
+    <main id="editor">
+      <div id="empty">
+        <div class="empty-mark"><svg><use href="#i-package"/></svg></div>
+        <div class="empty-title">Select a product to edit</div>
+        <div class="empty-sub">or add a new one from the list</div>
+      </div>
+
+      <div id="editor-inner" style="display:none;flex:1;flex-direction:column;min-height:0">
+        <div id="editor-head">
+          <button class="icon-btn back-btn" onclick="showList()" aria-label="Back"><svg><use href="#i-back"/></svg></button>
+          <div id="editor-title">New product</div>
+          <span class="mode-pill new" id="mode-pill">New</span>
+        </div>
+
+        <div id="editor-scroll">
+          <!-- core -->
+          <section class="section open" id="sec-core">
+            <header class="section-head" onclick="toggleSection('sec-core')">
+              <div class="section-text">
+                <div class="section-title">Core data</div>
+                <div class="section-sub">Name, brand, condition, drive, price</div>
+              </div>
+              <span class="chev"><svg><use href="#i-chev"/></svg></span>
+            </header>
+            <div class="section-body">
+              <div class="field">
+                <label class="label" for="f-name">Product name <span class="req">*</span></label>
+                <input id="f-name" type="text" placeholder="e.g. Audi A6 C7 EPS Rack 4G2423055BE RHD Pre-owned">
+              </div>
+              <div class="row row-2">
+                <div class="field">
+                  <label class="label" for="f-brand-sel">Brand <span class="req">*</span></label>
+                  <select id="f-brand-sel" onchange="onBrandSelectChange(this.value)"></select>
+                  <input id="f-brand" type="text" placeholder="Custom brand name…" style="margin-top:6px;display:none" oninput="setCustomBrand(this.value)">
+                </div>
+                <div class="field">
+                  <label class="label" for="f-sku">SKU</label>
+                  <input id="f-sku" type="text" class="mono" placeholder="AUD-EPS-A6C7-4G2423055BE-RHD-USED">
+                </div>
+              </div>
+              <div class="row row-3">
+                <div class="field">
+                  <span class="label">Condition <span class="req">*</span></span>
+                  <div class="seg" id="cond-seg">
+                    <button class="is-on is-on-used" data-v="used" onclick="setCondition('used')">Used</button>
+                    <button data-v="new" onclick="setCondition('new')">New</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <span class="label">Driver side <span class="req">*</span></span>
+                  <div class="seg" id="drive-seg">
+                    <button class="is-on is-on-rhd" data-v="RHD" onclick="setDrive('RHD')">RHD</button>
+                    <button data-v="LHD" onclick="setDrive('LHD')">LHD</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="f-parttype">Part type <span class="req">*</span></label>
+                  <select id="f-parttype" onchange="STATE.partType=this.value;autoSeo()">
+                    <option>EPS Rack</option>
+                    <option>Steering Rack</option>
+                    <option>Steering Column</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row row-2">
+                <div class="field">
+                  <label class="label" for="f-price">Price (GBP) <span class="req">*</span></label>
+                  <input id="f-price" type="number" step="0.01" min="0" placeholder="499.00" oninput="autoSeo()">
+                </div>
+                <div class="field">
+                  <label class="label" for="f-slug">Slug <span class="hint">— read-only after first publish</span></label>
+                  <input id="f-slug" type="text" class="mono" placeholder="audi-a6-c7-eps-rack-4g2423055be-rhd">
+                </div>
+              </div>
+              <div class="field">
+                <label class="label" for="f-coll-sel">Collection <span class="hint">— auto from brand</span></label>
+                <div style="display:flex;gap:8px">
+                  <select id="f-coll-sel" style="flex:1" onchange="onCollectionSelectChange(this.value)"></select>
+                  <button type="button" class="btn btn-ghost" style="padding:9px 12px;font-size:12px;white-space:nowrap" onclick="promptNewCollection()"><svg style="width:12px;height:12px"><use href="#i-plus"/></svg> New collection</button>
+                </div>
+                <input id="f-coll" type="text" class="mono" placeholder="custom-collection-slug" style="margin-top:6px;display:none" oninput="STATE.collSlug=this.value">
+              </div>
+            </div>
+          </section>
+
+          <!-- part numbers -->
+          <section class="section open" id="sec-parts">
+            <header class="section-head" onclick="toggleSection('sec-parts')">
+              <div class="section-text">
+                <div class="section-title">Numbers</div>
+              </div>
+              <span class="chev"><svg><use href="#i-chev"/></svg></span>
+            </header>
+            <div class="section-body">
+              <div class="field">
+                <label class="label" for="f-mpn">Manufacturer part number (MPN) <span class="req">*</span></label>
+                <input id="f-mpn" type="text" class="mono" placeholder="4G2423055BE" oninput="autoSeo()">
+              </div>
+              <div class="field">
+                <label class="label">Module numbers <span class="hint">— press Enter after each</span></label>
+                <div class="tag-wrap" onclick="this.querySelector('.tag-input').focus()">
+                  <span id="modules-tags" style="display:contents"></span>
+                  <input class="tag-input" id="modules-input" placeholder="e.g. 4G0909144G" onkeydown="handleTagKey(event,'modules')">
+                </div>
+              </div>
+              <div class="field">
+                <label class="label">OE / cross-reference numbers <span class="hint">— press Enter after each</span></label>
+                <div class="tag-wrap" onclick="this.querySelector('.tag-input').focus()">
+                  <span id="oerefs-tags" style="display:contents"></span>
+                  <input class="tag-input" id="oerefs-input" placeholder="e.g. 4G2423055DD" onkeydown="handleTagKey(event,'oerefs')">
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- description -->
+          <section class="section" id="sec-desc">
+            <header class="section-head" onclick="toggleSection('sec-desc')">
+              <div class="section-text">
+                <div class="section-title">Description note</div>
+                <div class="section-sub">Condition note on product page · switches with New / Pre-owned</div>
+              </div>
+              <span class="chev"><svg><use href="#i-chev"/></svg></span>
+            </header>
+            <div class="section-body">
+              <div class="field">
+                <textarea id="f-desc-note" rows="3" oninput="STATE.descNote=this.value"></textarea>
+                <button class="btn-link" style="margin-top:6px" onclick="resetDescNote()">↻ Reset default for current condition</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- page content -->
+          <section class="section" id="sec-content">
+            <header class="section-head" onclick="toggleSection('sec-content')">
+              <div class="section-text">
+                <div class="section-title">Page content</div>
+                <div class="section-sub">CTAs &amp; footer note · badges auto-populate from condition / drive</div>
+              </div>
+              <span class="chev"><svg><use href="#i-chev"/></svg></span>
+            </header>
+            <div class="section-body">
+
+              <div class="field">
+                <label class="label">Top badges <span class="hint">— read-only · populated from product details</span></label>
+                <div class="badge-preview" id="badge-preview">
+                  <!-- populated by renderBadgePreview() -->
+                </div>
+              </div>
+
+              <div class="row row-3" style="margin-top:14px">
+                <div class="field">
+                  <label class="label" for="f-cta-1">CTA 1 — Fitment</label>
+                  <input id="f-cta-1" type="text" value="UK REG/VIN/CHASSIS Fitment" oninput="STATE.cta1=this.value">
+                  <div class="action-hint">Triggers: opens WhatsApp chat</div>
+                </div>
+                <div class="field">
+                  <label class="label" for="f-cta-2">CTA 2 — Support</label>
+                  <input id="f-cta-2" type="text" value="Coding &amp; Support" oninput="STATE.cta2=this.value">
+                  <div class="action-hint">Triggers: opens WhatsApp chat</div>
+                </div>
+                <div class="field">
+                  <label class="label" for="f-cta-3">CTA 3 — Action <span class="hint">— auto from condition</span></label>
+                  <input id="f-cta-3" type="text" placeholder="Sell Old Rack → / Order &amp; Install →" oninput="STATE.cta3=this.value">
+                  <div class="action-hint" id="cta3-hint">Triggers: opens WhatsApp chat</div>
+                </div>
+              </div>
+
+              <div class="field" style="margin-top:14px">
+                <label class="label" for="f-footer-note">Footer note <span class="hint">— condition-specific · auto-fills on toggle</span></label>
+                <textarea id="f-footer-note" rows="2" oninput="STATE.footerNote=this.value"></textarea>
+                <button class="btn-link" style="margin-top:6px" onclick="resetFooterNote()">↻ Reset default for current condition</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- delivery -->
+          <section class="section" id="sec-delivery">
+            <header class="section-head" onclick="toggleSection('sec-delivery')">
+              <div class="section-text">
+                <div class="section-title">Delivery &amp; returns</div>
+                <div class="section-sub">Rates per zone · transit windows</div>
+              </div>
+              <span class="chev"><svg><use href="#i-chev"/></svg></span>
+            </header>
+            <div class="section-body">
+              <div class="compat-headers" style="grid-template-columns:1fr 1fr 1fr 1fr 34px">
+                <span>Zone</span><span>Rate</span><span>Handling</span><span>Transit</span><span></span>
+              </div>
+              <div class="compat-list" id="delivery-rows"></div>
+              <button class="btn-add" onclick="addDeliveryRow()"><svg width="12" height="12"><use href="#i-plus"/></svg> Add zone</button>
+            </div>
+          </section>
+
+          <!-- images -->
+          <section class="section" id="sec-images">
+            <header class="section-head" onclick="toggleSection('sec-images')">
+              <div class="section-text">
+                <div class="section-title">Images</div>
+                <div class="section-sub">Featured image = 1500×1500 WebP</div>
+              </div>
+              <span class="chev"><svg><use href="#i-chev"/></svg></span>
+            </header>
+            <div class="section-body">
+              <div class="proc-bar">
+                <div class="ps-seg">
+                  <button class="is-on" onclick="setProcSize(1500,this)">1500</button>
+                  <button onclick="setProcSize(800,this)">800</button>
+                  <button onclick="setProcSize(0,this)">Custom</button>
+                </div>
+                <button class="btn-proc" id="btn-proc-all" onclick="processAllImages()" disabled>Remove BG</button>
+              </div>
+              <div class="drop-zone" id="drop-zone" ondragover="event.preventDefault();this.classList.add('is-over')" ondragleave="this.classList.remove('is-over')" ondrop="handleDrop(event)">
+                <input type="file" accept="image/*" multiple onchange="handleFileInput(event)">
+                <div class="drop-zone-icon"><svg><use href="#i-upload"/></svg></div>
+                <div class="drop-zone-text">Drop images here or tap to browse</div>
+                <div class="drop-zone-sub">JPEG · PNG · WebP · max 25MB each</div>
+              </div>
+              <div class="image-grid" id="image-grid"></div>
+            </div>
+          </section>
+
+          <!-- compatibility -->
+          <section class="section" id="sec-compat">
+            <header class="section-head" onclick="toggleSection('sec-compat')">
+              <div class="section-text">
+                <div class="section-title">Vehicle compatibility</div>
+                <div class="section-sub">One row per model</div>
+              </div>
+              <span class="chev"><svg><use href="#i-chev"/></svg></span>
+            </header>
+            <div class="section-body">
+              <div class="compat-headers">
+                <span>Make</span><span>Model</span><span>Years</span><span>Chassis</span><span>Drive</span><span></span>
+              </div>
+              <div class="compat-list" id="compat-rows"></div>
+              <button class="btn-add" onclick="addCompatRow()"><svg width="12" height="12"><use href="#i-plus"/></svg> Add vehicle</button>
+            </div>
+          </section>
+
+          <!-- seo -->
+          <section class="section" id="sec-seo">
+            <header class="section-head" onclick="toggleSection('sec-seo')">
+              <div class="section-text">
+                <div class="section-title">SEO &amp; Merchant Centre</div>
+                <div class="section-sub">Auto-generated — click to override</div>
+              </div>
+              <span class="chev"><svg><use href="#i-chev"/></svg></span>
+            </header>
+            <div class="section-body">
+              <div class="field">
+                <label class="label" for="f-seo-title">SEO title <span class="hint">≤70 chars</span></label>
+                <input id="f-seo-title" type="text" oninput="charCount('f-seo-title','cc-title',70);updateSeoPreview()">
+                <div class="char-count" id="cc-title">0 / 70</div>
+              </div>
+              <div class="field">
+                <label class="label" for="f-seo-desc">Meta description <span class="hint">≤150 chars</span></label>
+                <textarea id="f-seo-desc" rows="2" oninput="charCount('f-seo-desc','cc-desc',150);updateSeoPreview()"></textarea>
+                <div class="char-count" id="cc-desc">0 / 150</div>
+              </div>
+              <div class="seo-preview">
+                <div class="seo-preview-url">powersteeringrackdirect.com › product-details › …</div>
+                <div class="seo-preview-title" id="seo-pt">—</div>
+                <div class="seo-preview-desc" id="seo-pd">—</div>
+              </div>
+              <button class="btn btn-ghost" style="margin-top:12px;font-size:12px;padding:7px 12px" onclick="autoSeo()">
+                <svg><use href="#i-refresh"/></svg> Auto-generate
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ─────────── action bar ─────────── -->
+  <footer id="actions">
+    <div id="publish-status">Select a product or create a new one</div>
+    <button class="btn btn-ghost btn-icon-only" id="btn-undo" onclick="undoState()" disabled title="Undo"><svg><use href="#i-undo"/></svg></button>
+    <button class="btn btn-ghost btn-icon-only" id="btn-redo" onclick="redoState()" disabled title="Redo"><svg><use href="#i-redo"/></svg></button>
+    <button class="btn btn-ghost" id="btn-preview" onclick="previewProduct()" disabled>
+      <svg><use href="#i-eye"/></svg><span class="action-labels">Preview</span>
+    </button>
+    <button class="btn btn-ghost" id="btn-copy" onclick="copyHtml()" disabled>
+      <svg><use href="#i-copy"/></svg><span class="action-labels">Copy HTML</span>
+    </button>
+    <button class="btn btn-primary" id="btn-publish" onclick="publishProduct()" disabled>
+      <svg><use href="#i-zap"/></svg><span class="action-labels">Publish</span>
+    </button>
+  </footer>
+</div>
+
+<div id="scrim" onclick="closeSidebar()"></div>
+
+<!-- ─────────── modals ─────────── -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <div class="modal-title">API configuration</div>
+    <div class="modal-sub">Credentials are stored in this browser only.</div>
+    <div class="field">
+      <label class="label" for="worker-url-input">Worker URL</label>
+      <input id="worker-url-input" type="url" placeholder="https://psrd-manager.mike-83d.workers.dev">
+    </div>
+    <div class="field">
+      <label class="label" for="app-secret-input">App secret <span class="hint">— must match APP_SECRET in your Worker</span></label>
+      <input id="app-secret-input" type="password" placeholder="your-secret">
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal('settings-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save &amp; connect</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="preview-modal">
+  <div class="modal" style="width:1100px;max-width:100%;display:flex;flex-direction:column;padding:0;height:calc(100dvh - 32px);max-height:calc(100dvh - 32px);overflow:hidden">
+    <div style="padding:18px 20px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:0">
+        <div class="modal-title" style="margin-bottom:2px">Product preview</div>
+        <div class="modal-sub" id="preview-sub" style="margin-bottom:0">Rendered exactly as it will appear on the live product page.</div>
+      </div>
+      <div class="seg" id="preview-mode-seg" style="flex-shrink:0">
+        <button class="is-on" data-v="rendered" onclick="setPreviewMode('rendered')">Preview</button>
+        <button data-v="source" onclick="setPreviewMode('source')">HTML</button>
+      </div>
+    </div>
+    <div id="preview-stage" style="flex:1 1 auto;display:flex;overflow:hidden;background:#f6f4ef;min-height:0;position:relative">
+      <iframe id="preview-frame" title="Product preview" style="flex:1;width:100%;border:0;display:block;background:#fff"></iframe>
+      <pre id="preview-content" style="display:none;position:absolute;inset:0;overflow:auto;background:var(--bg);padding:18px 20px;font-family:var(--font-mono);font-size:12px;line-height:1.55;white-space:pre-wrap;color:#7ec8a0;margin:0"></pre>
+    </div>
+    <div class="modal-btns" style="padding:14px 20px;border-top:1px solid var(--line);margin-top:0">
+      <button class="btn btn-ghost" onclick="closeModal('preview-modal')">Close</button>
+      <button class="btn btn-ghost" onclick="openPreviewInNewTab()"><svg><use href="#i-eye"/></svg> Open in new tab</button>
+      <button class="btn btn-primary" onclick="copyHtml()"><svg><use href="#i-copy"/></svg> Copy HTML</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="publish-modal">
+  <div class="modal">
+    <div class="modal-title" id="pub-title">Publishing…</div>
+    <div class="modal-sub" id="pub-sub">Please wait.</div>
+    <div class="steps" id="pub-steps">
+      <div class="step"><div class="step-dot" id="step-dot-1">1</div><span class="step-lbl" id="step-lbl-1">Write image metadata</span></div>
+      <div class="step"><div class="step-dot" id="step-dot-2">2</div><span class="step-lbl" id="step-lbl-2">Upload images</span></div>
+      <div class="step"><div class="step-dot" id="step-dot-3">3</div><span class="step-lbl" id="step-lbl-3">Push to GHL store</span></div>
+      <div class="step"><div class="step-dot" id="step-dot-4">4</div><span class="step-lbl" id="step-lbl-4">Update schema catalog</span></div>
+    </div>
+    <div class="modal-btns" id="pub-close-btn" style="display:none">
+      <button class="btn btn-primary" onclick="closeModal('publish-modal');refreshProducts()">Done ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────── demo data ───────────────────────
+// (Standalone demo of the redesigned UI — your Worker-backed
+// JS can be dropped back in unchanged: every input id, function
+// name, and DOM hook is preserved.)
+const BRANDS = ['Audi','BMW','Mercedes','Volkswagen','Porsche','Ford','Maserati','Land Rover','Volvo','SEAT','Skoda','Maybach','Bentley','Hyundai','Renault','Fiat'];
+const BRAND_TO_COLL = {'Audi':'audi','BMW':'bmw','Mercedes':'mercedes','Volkswagen':'volkswagen','Porsche':'porsche','Ford':'ford','Maserati':'maserati','Land Rover':'landrover','Volvo':'volvo','SEAT':'seat','Skoda':'skoda','Maybach':'maybach','Bentley':'bentley','Hyundai':'hyundai','Renault':'renault','Fiat':'fiat'};
+let CUSTOM_COLLECTIONS = []; // user-added collections
+
+// hardcoded WhatsApp endpoint — single source of truth for all CTAs / links
+const WHATSAPP_URL = 'https://wa.me/48880705402';
+const RETURNS_URL  = 'https://powersteeringrackdirect.com/returns';
+
+const DEFAULT_DESC_USED = 'Pre-owned, tested unit in good working order. May show minor cosmetic wear or light oxidation from prior use. Photos show the actual item and all included parts.';
+const DEFAULT_DESC_NEW  = 'Brand new genuine OEM unit, never fitted. Direct replacement with no modifications required. Sensor adaptation and wheel alignment may be needed after installation.';
+const DEFAULT_FOOTER_USED = "Old rack? No deposit required and no obligation to return your old unit. If you'd like to sell it back to us, we're happy to make you an offer — get in touch for a quote.";
+const DEFAULT_FOOTER_NEW  = 'Brand new genuine OEM unit shipped from our UK warehouse. Direct fitment — no coding required for most vehicles. Ask about installation support.';
+const DEFAULT_CTA3_USED = 'Sell Old Rack →';
+const DEFAULT_CTA3_NEW  = 'Order & Install →';
+const DEFAULT_WARRANTY_USED = 6;
+const DEFAULT_WARRANTY_NEW  = 12;
+const DEFAULT_QUALITY_USED  = 'Tested';
+const DEFAULT_QUALITY_NEW   = 'Genuine OEM';
+const DEFAULT_DELIVERY = [
+  { zone:'UK',        rate:'£49',  handling:'1–2 d', transit:'2–5 d' },
+  { zone:'Europe',    rate:'£59',  handling:'1–2 d', transit:'3–6 d' },
+  { zone:'Worldwide', rate:'£159', handling:'1–2 d', transit:'3–8 d' },
+];
+
+const DEMO_PRODUCTS = [
+  {id:'p1', name:'VW CRAFTER Electric Power Steering (EPS) Rack 2N2423061E RHD 2018-2024 New', slug:'vw-crafter-2018-2024-steering-rack-2n2423061e', isNew:true, isRHD:true},
+  {id:'p2', name:'AUDI Q3 VW TIGUAN SKODA KODIAQ Electric Power Steering (EPS) Rack 5QC423053E RHD 2018 New', slug:'audi-q3-vw-tiguan-skoda-kodiaq-2018-new', isNew:true, isRHD:true},
+  {id:'p3', name:'PORSCHE MACAN Electric Power Steering (EPS) Rack 95B423055L RHD 2015-2024 New', slug:'porsche-macan-steering-rack-95b423055l', isNew:true, isRHD:true},
+  {id:'p4', name:'AUDI A6 4G C7 Electric Power Steering (EPS) Rack 4G2423055AR RHD 2011-2017 New', slug:'audi-a6-4g-c7-2011-2017-rack-4g2423055ar', isNew:true, isRHD:true},
+  {id:'p5', name:'AUDI A6 S6 RS6 4K Electric Power Steering (EPS) Rack 4K2423055G RHD 2019-2024 New', slug:'audi-a6-s6-rs6-4k-2019-2024-rack-4k2423055g', isNew:true, isRHD:true},
+  {id:'p6', name:'AUDI A8 S8 4N Electric Power Steering (EPS) Rack 4N2423055H RHD 2018-2024 New', slug:'audi-a8-s8-4n-2018-2024-rack-4n2423055h', isNew:true, isRHD:true},
+  {id:'p7', name:'MERCEDES E Class W213 Electric Power Steering (EPS) Rack A2134604902 RHD 2016 New', slug:'mercedes-e-class-w213-2016-rack-a2134604902', isNew:true, isRHD:true},
+  {id:'p8', name:'FORD MUSTANG Electric Power Steering (EPS) Rack LR3C-3D080-DB RHD New', slug:'ford-mustang-rack-electric-lr3c-3d080-db', isNew:true, isRHD:true},
+  {id:'p9', name:'PORSCHE MACAN Electric Power Steering (EPS) Rack 95B423055AJ RHD 2015-2024 Pre-owned', slug:'porsche-macan-95b423055aj-preowned', isNew:false, isRHD:true},
+  {id:'p10', name:'AUDI A3 / VW GOLF / SEAT LEON / SKODA OCTAVIA EPS Rack 5WB423051AJ LHD 2020 Pre-owned', slug:'audi-a3-vw-golf-seat-skoda-5wb423051aj-lhd', isNew:false, isLHD:true},
+  {id:'p11', name:'BMW 5 F10 F11 6 F13 F12 Electric Power Steering (EPS) Rack 7806974360 RHD 2010-2012 Pre-owned', slug:'bmw-5-f10-f11-6-f13-2010-2012-7806974360', isNew:false, isRHD:true},
+  {id:'p12', name:'MERCEDES SL W231 Electric Power Steering (EPS) Rack 2314603200 RHD 2012-2020 Pre-owned', slug:'mercedes-sl-w231-rack-2314603200', isNew:false, isRHD:true},
+  {id:'p13', name:'LAND ROVER RANGE ROVER SPORT L494 EPS Rack GK623200BB RHD 2013-2022 Pre-owned', slug:'land-rover-rrs-l494-gk623200bb', isNew:false, isRHD:true},
+  {id:'p14', name:'AUDI Q5 SQ5 FY Electric Power Steering (EPS) Rack 80B423055F LHD 2017-2024 Pre-owned', slug:'audi-q5-sq5-fy-80b423055f-lhd', isNew:false, isLHD:true},
+  {id:'p15', name:'BMW 3 Series G20 G21 Electric Power Steering (EPS) Rack 225A477C5 RHD 2018-2022 Pre-owned', slug:'bmw-3-series-g20-g21-225a477c5', isNew:false, isRHD:true},
+  {id:'p16', name:'MERCEDES GLC W253 Electric Power Steering (EPS) Rack 2534605500 RHD 2016-2020 Pre-owned', slug:'mercedes-glc-w253-2534605500', isNew:false, isRHD:true},
+];
+
+// ─────────────────────── state ───────────────────────
+let STATE = {
+  workerUrl:'',
+  appSecret:'',
+  products:[], filtered:[],
+  current:null, isNew:false,
+  condition:'used', drive:'RHD', partType:'EPS Rack',
+  brand:'', collSlug:'', descNote:DEFAULT_DESC_USED,
+  modules:[], oerefs:[], skipNumbers:[],
+  compatRows:[], images:[],
+  priceId:null,
+  warrantyMonths: DEFAULT_WARRANTY_USED, returnsDays:'14',
+  badgeTax:'TAX inc.',
+  badgeQuality: DEFAULT_QUALITY_USED,
+  cta1:'UK REG/VIN/CHASSIS Fitment', cta2:'Coding & Support', cta3:DEFAULT_CTA3_USED,
+  footerNote:DEFAULT_FOOTER_USED,
+  deliveryRows: DEFAULT_DELIVERY.map(r=>({...r})),
+};
+let _compatId = 0;
+let _deliveryId = 0;
+
+// ─────────────────────── helpers ───────────────────────
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const v   = (id, val) => { const el = $(id); if (el) el.value = val ?? ''; };
+const gv  = id => ($(id)?.value || '').trim();
+
+function toast(msg, kind='info', dur=2400){
+  const t = $('toast'); t.textContent = msg; t.className = 'toast ' + kind + ' is-show';
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('is-show'), dur);
+}
+
+// ─────────────────────── init ───────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  buildBrandSelect();
+  buildCollectionSelect();
+  STATE.products = DEMO_PRODUCTS.map(p => ({...p}));
+  STATE.filtered = [...STATE.products];
+  renderProductList();
+  addCompatRow();
+  renderDeliveryRows();
+  renderBadgeEditors();
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undoState(); }
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) { e.preventDefault(); redoState(); }
+    if (e.key === 'Escape') { closeSidebar(); }
+  });
+});
+
+// ─────────────────────── sidebar drawer ───────────────────────
+function toggleSidebar(){ const s=$('sidebar'),sc=$('scrim'); const open=s.classList.toggle('is-open'); sc.classList.toggle('is-open',open); }
+function closeSidebar(){ $('sidebar').classList.remove('is-open'); $('scrim').classList.remove('is-open'); }
+function showList(){ document.body.classList.add('list-mode'); }
+function showEditorMobile(){ document.body.classList.remove('list-mode'); closeSidebar(); }
+
+// ─────────────────────── product list ───────────────────────
+function filterProducts(){
+  const q = gv('search').toLowerCase();
+  STATE.filtered = q ? STATE.products.filter(p => (p.name||'').toLowerCase().includes(q) || (p.slug||'').toLowerCase().includes(q)) : [...STATE.products];
+  renderProductList();
+}
+function renderProductList(){
+  const list = $('prod-list'); const count = $('list-count');
+  count.textContent = STATE.filtered.length;
+  if (!STATE.filtered.length) { list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--ink-4);font-size:13px">No products found</div>'; return; }
+  list.innerHTML = STATE.filtered.map(p => {
+    const active = STATE.current && STATE.current.id === p.id ? ' active' : '';
+    const badges = [
+      p.isNew ? '<span class="badge badge-new">New</span>' : '<span class="badge badge-used">Pre-owned</span>',
+      p.isRHD ? '<span class="badge badge-rhd">RHD</span>' : '',
+      p.isLHD ? '<span class="badge badge-lhd">LHD</span>' : '',
+    ].filter(Boolean).join('');
+    return `<div class="prod-card${active}" onclick="loadProduct('${p.id}')">
+      <div class="prod-name">${esc(p.name)}</div>
+      <div class="prod-sku">${esc((p.slug||p.id).slice(0,42))}</div>
+      <div class="prod-badges">${badges}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─────────────────────── load / new ───────────────────────
+function loadProduct(id){
+  const p = STATE.products.find(x=>x.id===id); if (!p) return;
+  STATE.current = p; STATE.isNew = false;
+  v('f-name', p.name); v('f-slug', p.slug);
+  const brandRaw = p.name.split(/\s+/)[0].toUpperCase();
+  const brandMap = { AUDI:'Audi', BMW:'BMW', MERCEDES:'Mercedes', VW:'Volkswagen', VOLKSWAGEN:'Volkswagen', PORSCHE:'Porsche', FORD:'Ford', LAND:'Land Rover', VOLVO:'Volvo', SEAT:'SEAT', SKODA:'Skoda', MAYBACH:'Maybach', BENTLEY:'Bentley', HYUNDAI:'Hyundai', RENAULT:'Renault', FIAT:'Fiat', MASERATI:'Maserati' };
+  const brand = brandMap[brandRaw] || '';
+  setBrand(BRANDS.includes(brand) ? brand : '');
+  // collection auto-set via setBrand; keep custom input hidden
+  const cSel = $('f-coll-sel');
+  if (cSel && BRAND_TO_COLL[STATE.brand]) cSel.value = BRAND_TO_COLL[STATE.brand];
+  setCondition(p.isNew ? 'new' : 'used');
+  setDrive(p.isLHD ? 'LHD' : 'RHD');
+  const mpnM = p.name.match(/\b([A-Z0-9]*\d[A-Z0-9]{4,})\b/); v('f-mpn', mpnM ? mpnM[1] : '');
+  v('f-price', p.isNew ? '1199' : '799');
+  v('f-sku', `${(STATE.brand||'OEM').toUpperCase().slice(0,3)}-EPS-${(mpnM?mpnM[1]:'PN')}-${STATE.drive}${p.isNew?'-NEW':'-USED'}`);
+  STATE.modules = []; STATE.oerefs = []; STATE.skipNumbers = [];
+  renderTags('modules'); renderTags('oerefs');
+  STATE.compatRows = []; _compatId = 0; addCompatRow(STATE.brand, '', '', '', STATE.drive);
+  STATE.images = []; renderImageGrid();
+  // reset page-content to defaults for this condition
+  STATE.badgeTax = 'TAX inc.';
+  STATE.returnsDays = '14';
+  STATE.cta1 = 'UK REG/VIN/CHASSIS Fitment'; v('f-cta-1', STATE.cta1);
+  STATE.cta2 = 'Coding & Support'; v('f-cta-2', STATE.cta2);
+  // setCondition above set descNote/footerNote/cta3/warrantyMonths/badgeQuality from condition
+  v('f-cta-3', STATE.cta3);
+  STATE.deliveryRows = DEFAULT_DELIVERY.map(r => ({...r, id: ++_deliveryId}));
+  renderDeliveryRows();
+  renderBadgeEditors();
+  autoSeo();
+  $('empty').style.display = 'none';
+  $('editor-inner').style.display = 'flex';
+  const pill = $('mode-pill'); pill.textContent = 'Edit'; pill.className = 'mode-pill edit';
+  $('editor-title').textContent = p.name;
+  const st = $('publish-status'); st.textContent = `Editing: ${p.name.slice(0,60)}…`; st.className = '';
+  enableButtons(true);
+  renderProductList();
+  showEditorMobile();
+}
+
+function newProduct(){
+  STATE.current = null; STATE.isNew = true;
+  STATE.modules = []; STATE.oerefs = []; STATE.skipNumbers = [];
+  STATE.images = []; STATE.compatRows = []; _compatId = 0;
+  ['f-name','f-slug','f-sku','f-mpn','f-price','f-seo-title','f-seo-desc','f-coll','f-brand'].forEach(id => v(id,''));
+  const bSel=$('f-brand-sel'); if (bSel) bSel.value='';
+  const cSel=$('f-coll-sel');  if (cSel) cSel.value='';
+  $('f-brand').style.display='none'; $('f-coll').style.display='none';
+  STATE.collSlug='';
+  setCondition('used'); setDrive('RHD'); setBrand('');
+  $('f-parttype').value = 'EPS Rack'; STATE.partType = 'EPS Rack';
+  // page-content defaults
+  STATE.badgeTax = 'TAX inc.';
+  STATE.returnsDays = '14';
+  STATE.cta1 = 'UK REG/VIN/CHASSIS Fitment'; v('f-cta-1', STATE.cta1);
+  STATE.cta2 = 'Coding & Support'; v('f-cta-2', STATE.cta2);
+  // setCondition('used') already set descNote/footerNote/cta3/warrantyMonths/badgeQuality
+  v('f-cta-3', STATE.cta3);
+  // delivery
+  STATE.deliveryRows = DEFAULT_DELIVERY.map(r => ({...r, id: ++_deliveryId}));
+  renderDeliveryRows();
+  renderTags('modules'); renderTags('oerefs');
+  addCompatRow(); renderImageGrid();
+  renderBadgeEditors();
+  $('empty').style.display = 'none';
+  $('editor-inner').style.display = 'flex';
+  const pill = $('mode-pill'); pill.textContent = 'New'; pill.className = 'mode-pill new';
+  $('editor-title').textContent = 'New product';
+  $('publish-status').textContent = 'New product — fill in and publish';
+  enableButtons(true);
+  updateSeoPreview();
+  showEditorMobile();
+}
+
+function enableButtons(on){ ['btn-preview','btn-copy','btn-publish','btn-undo','btn-redo'].forEach(id => { const el=$(id); if(el) el.disabled = !on; }); }
+
+// ─────────────────────── brands & collections (dropdowns) ───────────────────────
+function buildBrandSelect(){
+  const sel = $('f-brand-sel'); if (!sel) return;
+  const opts = ['<option value="">— Select brand —</option>']
+    .concat(BRANDS.map(b => `<option value="${esc(b)}">${esc(b)}</option>`))
+    .concat(['<option value="__custom">+ Add custom brand…</option>']);
+  sel.innerHTML = opts.join('');
+}
+function buildCollectionSelect(){
+  const sel = $('f-coll-sel'); if (!sel) return;
+  const opts = ['<option value="">— Select collection —</option>']
+    .concat(BRANDS.map(b => `<option value="${esc(BRAND_TO_COLL[b])}">${esc(BRAND_TO_COLL[b])}</option>`));
+  if (CUSTOM_COLLECTIONS.length) {
+    opts.push('<option disabled>──────────</option>');
+    CUSTOM_COLLECTIONS.forEach(c => opts.push(`<option value="${esc(c.slug)}">${esc(c.slug)}</option>`));
+  }
+  opts.push('<option value="__custom">+ Custom slug…</option>');
+  sel.innerHTML = opts.join('');
+}
+function promptNewCollection(){
+  const label = window.prompt('Collection name — one word only (e.g. "mini")');
+  if (!label) return;
+  const slug = slugify(label).replace(/-/g,'');
+  if (!slug || !/^[a-z0-9]+$/.test(slug)) { toast('Use one word, letters/numbers only','err'); return; }
+  if (CUSTOM_COLLECTIONS.some(c=>c.slug===slug) || BRANDS.some(b=>BRAND_TO_COLL[b]===slug)) {
+    toast('Collection already exists','info');
+  } else {
+    CUSTOM_COLLECTIONS.push({label: slug, slug});
+    buildCollectionSelect();
+    toast(`Added collection: ${slug}`,'ok');
+  }
+  STATE.collSlug = slug;
+  const sel = $('f-coll-sel'); if (sel) sel.value = slug;
+}
+function onBrandSelectChange(val){
+  const customInput = $('f-brand');
+  if (val === '__custom') {
+    customInput.style.display = 'block';
+    customInput.focus();
+    STATE.brand = customInput.value.trim();
+  } else {
+    customInput.style.display = 'none';
+    customInput.value = '';
+    setBrand(val);
+  }
+  autoSeo();
+}
+function onCollectionSelectChange(val){
+  const customInput = $('f-coll');
+  if (val === '__custom') {
+    customInput.style.display = 'block';
+    customInput.focus();
+    STATE.collSlug = customInput.value.trim();
+  } else {
+    customInput.style.display = 'none';
+    customInput.value = '';
+    STATE.collSlug = val;
+  }
+}
+function setBrand(brand){
+  STATE.brand = brand;
+  const bSel = $('f-brand-sel');
+  if (bSel) {
+    if (brand && BRANDS.includes(brand)) bSel.value = brand;
+    else if (!brand) bSel.value = '';
+  }
+  if (brand && BRAND_TO_COLL[brand]) {
+    STATE.collSlug = BRAND_TO_COLL[brand];
+    const cSel = $('f-coll-sel');
+    if (cSel) cSel.value = BRAND_TO_COLL[brand];
+    const cIn = $('f-coll'); if (cIn) { cIn.style.display='none'; cIn.value=''; }
+  }
+  autoSeo();
+}
+function setCustomBrand(val){
+  STATE.brand = val.trim();
+  autoSeo();
+}
+
+// ─────────────────────── toggles ───────────────────────
+function setCondition(val){
+  STATE.condition = val;
+  document.querySelectorAll('#cond-seg button').forEach(b => {
+    b.classList.remove('is-on','is-on-used','is-on-new');
+    if (b.dataset.v === val) b.classList.add('is-on', val==='new' ? 'is-on-new' : 'is-on-used');
+  });
+  // ALWAYS auto-populate condition-driven defaults — user can override afterwards
+  const isNew = val === 'new';
+  STATE.descNote   = isNew ? DEFAULT_DESC_NEW   : DEFAULT_DESC_USED;
+  STATE.footerNote = isNew ? DEFAULT_FOOTER_NEW : DEFAULT_FOOTER_USED;
+  STATE.cta3       = isNew ? DEFAULT_CTA3_NEW   : DEFAULT_CTA3_USED;
+  STATE.warrantyMonths = isNew ? DEFAULT_WARRANTY_NEW : DEFAULT_WARRANTY_USED;
+  STATE.badgeQuality   = isNew ? DEFAULT_QUALITY_NEW  : DEFAULT_QUALITY_USED;
+  STATE.badgeCondition = isNew ? 'New' : 'Used';
+  v('f-desc-note',   STATE.descNote);
+  v('f-footer-note', STATE.footerNote);
+  v('f-cta-3',       STATE.cta3);
+  renderBadgeEditors();
+}
+function setDrive(val){
+  STATE.drive = val;
+  STATE.badgeDrive = val;
+  document.querySelectorAll('#drive-seg button').forEach(b => {
+    b.classList.remove('is-on','is-on-rhd','is-on-lhd');
+    if (b.dataset.v === val) b.classList.add('is-on', val==='RHD' ? 'is-on-rhd' : 'is-on-lhd');
+  });
+  renderBadgeEditors();
+}
+
+// ─────────────────────── badge preview (read-only) ───────────────────────
+// Top badges are auto-populated from condition + drive selections; not editable here.
+function renderBadgeEditors(){
+  const host = $('badge-preview'); if (!host) return;
+  const isNew = STATE.condition === 'new';
+  const drive = STATE.drive;
+  const condClass  = isNew ? 'sw-new' : 'sw-used';
+  const driveClass = drive === 'LHD' ? 'sw-lhd' : 'sw-rhd';
+  // Always-derived values (overwrite any stale state so badges match selection)
+  STATE.badgeTax       = 'TAX inc.';
+  STATE.badgeCondition = isNew ? 'New' : 'Used';
+  STATE.badgeQuality   = isNew ? DEFAULT_QUALITY_NEW : DEFAULT_QUALITY_USED;
+  STATE.badgeDrive     = drive;
+  STATE.warrantyMonths = isNew ? DEFAULT_WARRANTY_NEW : DEFAULT_WARRANTY_USED;
+  const warrLabel  = `${STATE.warrantyMonths}M Warranty`;
+  const driveLabel = `${drive} System`;
+  host.innerHTML = `
+    <div class="badge-preview-row">
+      <span class="swatch sw-tax">${esc(STATE.badgeTax)}</span>
+      <span class="swatch ${condClass}">${esc(STATE.badgeCondition)}</span>
+      <span class="swatch sw-cyan">${esc(STATE.badgeQuality)}</span>
+      <span class="swatch sw-pink">${esc(warrLabel)}</span>
+      <span class="swatch ${driveClass}">${esc(driveLabel)}</span>
+    </div>
+    <div class="badge-preview-note">
+      Auto-populated from <strong>Condition</strong> &amp; <strong>Driver side</strong> in <em>Core data</em>. Edit those to change these badges.
+    </div>`;
+}
+function resetDescNote(){
+  const d = STATE.condition==='new' ? DEFAULT_DESC_NEW : DEFAULT_DESC_USED;
+  v('f-desc-note', d); STATE.descNote = d;
+}
+function resetFooterNote(){
+  const f = STATE.condition==='new' ? DEFAULT_FOOTER_NEW : DEFAULT_FOOTER_USED;
+  v('f-footer-note', f); STATE.footerNote = f;
+}
+
+// ─────────────────────── sections ───────────────────────
+function toggleSection(id){ $(id).classList.toggle('open'); }
+
+// ─────────────────────── tags ───────────────────────
+function handleTagKey(e, field){
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.replace(/,/g,'').trim().toUpperCase();
+    if (val) { STATE[field].push(val); e.target.value=''; renderTags(field); autoSeo(); }
+  } else if (e.key === 'Backspace' && !e.target.value && STATE[field].length) {
+    STATE[field].pop(); renderTags(field);
+  }
+}
+function renderTags(field){
+  const host = $(field+'-tags'); if (!host) return;
+  host.innerHTML = STATE[field].map((t,i) => `<span class="tag">${esc(t)}<button onclick="removeTag('${field}',${i})" aria-label="Remove">×</button></span>`).join('');
+}
+function removeTag(field, i){ STATE[field].splice(i,1); renderTags(field); autoSeo(); }
+
+// ─────────────────────── compat rows ───────────────────────
+function addCompatRow(make='', model='', years='', platform='', drive=''){
+  const id = ++_compatId;
+  STATE.compatRows.push({ id, make, model, years, platform, drive: drive || STATE.drive });
+  renderCompatRows();
+}
+function renderCompatRows(){
+  $('compat-rows').innerHTML = STATE.compatRows.map(r => `
+    <div class="compat-row" id="cr-${r.id}">
+      <input type="text" value="${esc(r.make)}" placeholder="Audi" oninput="updCR(${r.id},'make',this.value)">
+      <input type="text" value="${esc(r.model)}" placeholder="A6 / A6 Avant" oninput="updCR(${r.id},'model',this.value)">
+      <input type="text" value="${esc(r.years)}" placeholder="2010–2018" oninput="updCR(${r.id},'years',this.value)">
+      <input type="text" value="${esc(r.platform)}" placeholder="C7" oninput="updCR(${r.id},'platform',this.value)">
+      <select onchange="updCR(${r.id},'drive',this.value)">
+        <option ${r.drive==='RHD'?'selected':''}>RHD</option>
+        <option ${r.drive==='LHD'?'selected':''}>LHD</option>
+        <option ${r.drive==='Both'?'selected':''}>Both</option>
+      </select>
+      <button class="btn-rm" onclick="rmCR(${r.id})" aria-label="Remove"><svg><use href="#i-x"/></svg></button>
+    </div>`).join('');
+}
+function updCR(id,f,val){ const r=STATE.compatRows.find(x=>x.id===id); if(r) r[f]=val; autoSeo(); }
+function rmCR(id){ STATE.compatRows = STATE.compatRows.filter(r=>r.id!==id); renderCompatRows(); }
+
+// ─────────────────────── delivery rows ───────────────────────
+function addDeliveryRow(zone='', rate='', handling='', transit=''){
+  const id = ++_deliveryId;
+  STATE.deliveryRows.push({ id, zone, rate, handling, transit });
+  renderDeliveryRows();
+}
+function renderDeliveryRows(){
+  // ensure each row has an id (defaults from constant don't)
+  STATE.deliveryRows.forEach(r => { if (!r.id) r.id = ++_deliveryId; });
+  $('delivery-rows').innerHTML = STATE.deliveryRows.map(r => `
+    <div class="delivery-row" id="dr-${r.id}">
+      <input type="text" value="${esc(r.zone)}" placeholder="UK" oninput="updDR(${r.id},'zone',this.value)">
+      <input type="text" value="${esc(r.rate)}" placeholder="£49" oninput="updDR(${r.id},'rate',this.value)">
+      <input type="text" value="${esc(r.handling)}" placeholder="1–2 d" oninput="updDR(${r.id},'handling',this.value)">
+      <input type="text" value="${esc(r.transit)}" placeholder="2–5 d" oninput="updDR(${r.id},'transit',this.value)">
+      <button class="btn-rm" onclick="rmDR(${r.id})" aria-label="Remove"><svg><use href="#i-x"/></svg></button>
+    </div>`).join('');
+}
+function updDR(id,f,val){ const r=STATE.deliveryRows.find(x=>x.id===id); if(r) r[f]=val; }
+function rmDR(id){ STATE.deliveryRows = STATE.deliveryRows.filter(r=>r.id!==id); renderDeliveryRows(); }
+
+// ─────────────────────── images ───────────────────────
+function handleDrop(e){ e.preventDefault(); $('drop-zone').classList.remove('is-over'); addFiles([...e.dataTransfer.files]); }
+function handleFileInput(e){ addFiles([...e.target.files]); e.target.value=''; }
+function addFiles(files){
+  files.filter(f => f.type.startsWith('image/')).forEach((f, i) => {
+    STATE.images.push({ file:f, objectUrl:URL.createObjectURL(f), alt:'', uploadedUrl:null, featured: STATE.images.length===0 && i===0 });
+  });
+  renderImageGrid();
+}
+function renderImageGrid(){
+  const grid = $('image-grid');
+  $('btn-proc-all').disabled = STATE.images.length === 0;
+  grid.innerHTML = STATE.images.map((img,i) => `
+    <div class="img-card ${img.featured?'featured':''}">
+      <img class="img-thumb" src="${img.objectUrl}" alt="" loading="lazy">
+      <div class="img-body">
+        <input class="img-alt" type="text" placeholder="Alt text…" value="${esc(img.alt)}" oninput="STATE.images[${i}].alt=this.value">
+        <div class="img-acts">
+          <button class="img-btn ${img.featured?'is-on':''}" onclick="setFeatured(${i})" title="${img.featured?'Featured':'Set featured'}" aria-label="Featured">
+            <svg width="14" height="14"><use href="#i-star"/></svg>
+          </button>
+          <button class="img-btn danger" onclick="rmImg(${i})" title="Remove" aria-label="Remove">
+            <svg width="14" height="14"><use href="#i-trash"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function setFeatured(i){ STATE.images.forEach((m,j) => m.featured = j===i); renderImageGrid(); }
+function rmImg(i){ if (STATE.images[i]?.objectUrl) URL.revokeObjectURL(STATE.images[i].objectUrl); STATE.images.splice(i,1); renderImageGrid(); }
+function setProcSize(s, btn){ document.querySelectorAll('.ps-seg button').forEach(b=>b.classList.remove('is-on')); btn.classList.add('is-on'); }
+function processAllImages(){ toast('Demo: would call Worker to remove backgrounds and re-encode WebP', 'info'); }
+
+// ─────────────────────── SEO ───────────────────────
+function autoSeo(){
+  const brand = STATE.brand || gv('f-brand');
+  const mpn = gv('f-mpn');
+  if (!brand || !mpn) { v('f-seo-title',''); v('f-seo-desc',''); charCount('f-seo-title','cc-title',70); charCount('f-seo-desc','cc-desc',150); updateSeoPreview(); return; }
+  const drive = STATE.drive;
+  const SEO_PART_PHRASE = {'EPS Rack':'Power Steering Gear (EPS) Rack','Steering Rack':'Power Steering Rack','Steering Column':'Power Steering Column'};
+  const phrase = SEO_PART_PHRASE[STATE.partType] || 'Power Steering Rack';
+  const title = `${brand} OEM ${mpn} ${phrase}${drive==='LHD'?' LHD':''}`.slice(0,70);
+  const models = STATE.compatRows.filter(r=>r.model).map(r=>r.model.trim()).filter((v,i,a)=>a.indexOf(v)===i).join(' ');
+  const years = STATE.compatRows.map(r=>r.years||'').filter(Boolean);
+  const yearFrom = years.length ? years.reduce((a,b) => { const ay=a.match(/(\d{4})/)?.[1]||''; const by=b.match(/(\d{4})/)?.[1]||''; return ay<by?a:b; }).match(/(\d{4})/)?.[1]||'' : '';
+  const driveQual = drive==='LHD' ? 'left-hand drive ' : '';
+  const short = {'EPS Rack':'EPS Rack','Steering Rack':'Steering Rack','Steering Column':'Steering Column'}[STATE.partType] || 'EPS Rack';
+  const refs = STATE.oerefs.filter(r => r.toUpperCase() !== mpn.toUpperCase()).slice(0,4).join(', ');
+  let desc = `Genuine ${brand} part ${mpn} OEM ${short}`;
+  if (refs) desc += ` Cross-ref: ${refs}`;
+  if (models && yearFrom) desc += ` fits ${driveQual}${models} models from ${yearFrom} onwards.`;
+  v('f-seo-title', title); v('f-seo-desc', desc.slice(0,150));
+  charCount('f-seo-title','cc-title',70); charCount('f-seo-desc','cc-desc',150);
+  updateSeoPreview();
+}
+function updateSeoPreview(){
+  $('seo-pt').textContent = gv('f-seo-title') || '—';
+  $('seo-pd').textContent = gv('f-seo-desc') || '—';
+}
+function charCount(inputId, countId, limit){
+  const len = ($(inputId)?.value || '').length;
+  const el = $(countId); if (!el) return;
+  el.textContent = `${len} / ${limit}`;
+  el.className = 'char-count' + (len > limit ? ' over' : len > limit*0.9 ? ' warn' : '');
+}
+
+// ─────────────────────── modals & misc ───────────────────────
+function openModal(id){ $(id).classList.add('is-open'); }
+function closeModal(id){ $(id).classList.remove('is-open'); }
+function saveSettings(){ closeModal('settings-modal'); toast('Settings saved (demo)', 'ok'); }
+function refreshProducts(){ toast('Refreshing… (demo)', 'info'); }
+
+// ─────────────────────── product page CSS (for rendered preview & export) ───────────────────────
+const PRODUCT_CSS = `
+:root{
+  --pg-bg:#0b0d11;
+  --pg-bg-1:#11141a;
+  --pg-bg-2:#171b22;
+  --pg-bg-3:#1f242d;
+  --pg-line:#262b35;
+  --pg-line-2:#323845;
+  --pg-ink:#eef0f4;
+  --pg-ink-2:#aeb4c0;
+  --pg-ink-3:#7a8290;
+  --pg-ink-4:#525a68;
+  --pg-accent:#f0a956;
+  --pg-accent-2:#d99440;
+  --pg-accent-ink:#fff1dc;
+  --pg-accent-soft:rgba(240,169,86,.12);
+  --pg-accent-line:rgba(240,169,86,.32);
+  --pg-ok:#4ade80;
+  --pg-ok-soft:rgba(74,222,128,.12);
+  --pg-ok-line:rgba(74,222,128,.32);
+  --pg-info:#60a5fa;
+  --pg-info-soft:rgba(96,165,250,.13);
+  --pg-info-line:rgba(96,165,250,.32);
+  --pg-violet:#c084fc;
+  --pg-violet-soft:rgba(192,132,252,.13);
+  --pg-violet-line:rgba(192,132,252,.32);
+  --pg-pink:#f472b6;
+  --pg-pink-soft:rgba(244,114,182,.13);
+  --pg-pink-line:rgba(244,114,182,.32);
+  --pg-cyan:#22d3ee;
+  --pg-cyan-soft:rgba(34,211,238,.13);
+  --pg-cyan-line:rgba(34,211,238,.32);
+  --pg-r:4px;
+  --pg-r-sm:3px;
+  --pg-r-pill:999px;
+  --pg-font:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --pg-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --pg-shadow:0 1px 2px rgba(0,0,0,.4),0 24px 60px rgba(0,0,0,.4);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;background:radial-gradient(120% 80% at 50% -10%,#1a1f2a 0%,var(--pg-bg) 60%) fixed;color:var(--pg-ink);font-family:var(--pg-font);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--pg-info);text-decoration:none}
+a:hover{color:#93c5fd}
+
+.pg{
+  max-width:900px;margin:24px auto;
+  background:linear-gradient(180deg,var(--pg-bg-1) 0%,var(--pg-bg) 100%);
+  padding:28px clamp(16px,3.5vw,36px) 40px;
+  border-radius:16px;
+  border:1px solid var(--pg-line);
+  box-shadow:var(--pg-shadow);
+}
+
+/* image gallery */
+.gallery{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-bottom:22px;
+}
+.gallery .hero{
+  aspect-ratio:4/3;
+  background:var(--pg-bg-2) center/contain no-repeat;
+  border:1px solid var(--pg-line);
+  border-radius:var(--pg-r);
+  position:relative;
+  overflow:hidden;
+}
+.gallery .hero.placeholder{
+  display:grid;place-items:center;color:var(--pg-ink-4);font-size:13px;
+  background:repeating-linear-gradient(45deg,var(--pg-bg-2) 0 10px,var(--pg-bg-3) 10px 20px);
+}
+.gallery .thumbs{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(70px,1fr));
+  gap:8px;
+}
+.gallery .thumbs .t{
+  aspect-ratio:1/1;
+  background:var(--pg-bg-2) center/cover no-repeat;
+  border:1px solid var(--pg-line);
+  border-radius:var(--pg-r-sm);
+}
+
+/* breadcrumb */
+.bc{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+  font-size:12.5px;color:var(--pg-ink-3);
+  margin-bottom:16px;
+  letter-spacing:.01em;
+}
+.bc a{color:var(--pg-ink-3)}
+.bc a:hover{color:var(--pg-ink)}
+.bc span:not(.bc-s){color:var(--pg-ink-2);font-weight:500}
+.bc-s{color:var(--pg-line-2);font-size:11px;margin:0 2px}
+
+/* badges */
+.badges{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.bdg{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11.5px;font-weight:600;letter-spacing:.04em;
+  padding:5px 11px;border-radius:var(--pg-r-pill);
+  border:1px solid transparent;
+  text-transform:uppercase;
+  background:var(--pg-bg-2);
+}
+.bdg::before{
+  content:"";
+  width:6px;height:6px;border-radius:50%;
+  background:currentColor;
+  box-shadow:0 0 8px currentColor;
+  opacity:.85;
+}
+.bdg.b-tax       {background:var(--pg-bg-3);color:var(--pg-ink-2);border-color:var(--pg-line-2)}
+.bdg.b-condition {background:var(--pg-accent-soft);color:var(--pg-accent);border-color:var(--pg-accent-line)}
+.bdg.b-condition.is-new{background:var(--pg-ok-soft);color:var(--pg-ok);border-color:var(--pg-ok-line)}
+.bdg.b-tested    {background:var(--pg-cyan-soft);color:var(--pg-cyan);border-color:var(--pg-cyan-line)}
+.bdg.b-drv       {background:var(--pg-info-soft);color:var(--pg-info);border-color:var(--pg-info-line)}
+.bdg.b-drv.is-lhd{background:var(--pg-violet-soft);color:var(--pg-violet);border-color:var(--pg-violet-line)}
+.bdg.b-war       {background:var(--pg-pink-soft);color:var(--pg-pink);border-color:var(--pg-pink-line)}
+
+/* rule */
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--pg-line) 12%,var(--pg-line) 88%,transparent);margin:20px 0 4px}
+.mt-16{margin-top:18px}
+
+/* section heads */
+.s-hd{margin:18px 0 12px;display:flex;align-items:center;gap:10px}
+.s-hd h2,.s-hd h3{
+  margin:0;font-weight:700;letter-spacing:-.01em;color:var(--pg-ink);
+}
+.s-hd h2{font-size:19px}
+.s-hd h3{font-size:16px}
+.s-hd h2::before,.s-hd h3::before{
+  content:"";display:inline-block;
+  width:3px;height:1em;background:var(--pg-accent);
+  border-radius:3px;margin-right:10px;vertical-align:-2px;
+  box-shadow:0 0 12px var(--pg-accent);
+}
+
+/* part numbers */
+.pn-lbl{
+  font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--pg-ink-3);margin:14px 0 7px;
+}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.chip{
+  display:inline-flex;align-items:center;
+  font-family:var(--pg-mono);font-size:13px;font-weight:500;
+  padding:6px 11px;
+  background:var(--pg-bg-2);border:1px solid var(--pg-line);
+  color:var(--pg-ink);
+  border-radius:var(--pg-r-sm);
+  letter-spacing:.02em;
+}
+.chip.mpn{
+  background:linear-gradient(180deg,var(--pg-accent-soft),rgba(240,169,86,.04));
+  border-color:var(--pg-accent-line);
+  color:var(--pg-accent-ink);
+  font-weight:600;
+  box-shadow:0 0 0 1px rgba(240,169,86,.06),0 6px 18px rgba(240,169,86,.08);
+}
+
+/* description note */
+.description-note{margin:18px 0 6px;display:flex;flex-direction:column;gap:8px}
+.description-note .intro{margin:0;color:var(--pg-ink-2);font-size:14.5px;line-height:1.65}
+
+/* CTAs */
+.ctas{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.ctas a{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 14px;
+  background:var(--pg-bg-2);border:1px solid var(--pg-line-2);
+  border-radius:var(--pg-r);
+  font-size:13px;font-weight:600;
+  color:var(--pg-ink);
+}
+.ctas a:hover{
+  background:var(--pg-accent-soft);
+  border-color:var(--pg-accent);
+  color:var(--pg-accent);
+}
+.ctas a.primary{
+  background:linear-gradient(180deg,var(--pg-accent) 0%,var(--pg-accent-2) 100%);
+  color:#1a1206;border-color:var(--pg-accent);
+  box-shadow:0 6px 18px rgba(240,169,86,.25);
+}
+.ctas a.primary:hover{filter:brightness(1.06);color:#1a1206}
+
+/* tables */
+.t-wrap{
+  border:1px solid var(--pg-line);
+  border-radius:var(--pg-r);
+  overflow:hidden;
+  margin-top:6px;
+  background:var(--pg-bg-1);
+}
+.ct{width:100%;border-collapse:collapse;font-size:13.5px}
+.ct th,.ct td{
+  padding:11px 14px;
+  text-align:left;
+  border-bottom:1px solid var(--pg-line);
+}
+.ct th{
+  font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--pg-ink-3);background:var(--pg-bg-2);
+}
+.ct tr:last-child td{border-bottom:0}
+.ct tbody tr:hover td{background:rgba(240,169,86,.04)}
+.ct td{color:var(--pg-ink-2)}
+.ct td:first-child,.ct td:nth-child(2){color:var(--pg-ink);font-weight:500}
+
+/* notes */
+.note{
+  font-size:13px;color:var(--pg-ink-3);
+  margin-top:10px;line-height:1.6;
+}
+.note a{color:var(--pg-info);font-weight:500}
+.note a:hover{color:#93c5fd;text-decoration:underline}
+
+/* responsive */
+@media (max-width:640px){
+  .pg{margin:0;border-radius:0;border-left:0;border-right:0;padding:18px 14px 32px}
+  .s-hd h2{font-size:17px}
+  .s-hd h3{font-size:15px}
+  .ct th,.ct td{padding:9px 10px;font-size:12.5px}
+  .ctas a{flex:1 1 auto;justify-content:center}
+  .bdg{font-size:10.5px;padding:4px 9px}
+  .chip{font-size:12px;padding:5px 9px}
+  .gallery .thumbs{grid-template-columns:repeat(auto-fill,minmax(56px,1fr))}
+}
+@media (max-width:420px){
+  .ct{font-size:12px}
+  .ct th{font-size:10px;letter-spacing:.06em}
+}
+`;
+
+// ─────────────────────── product HTML generator ───────────────────────
+function slugify(s){
+  return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function generateProductHtml(){
+  const brand = STATE.brand || gv('f-brand') || 'Brand';
+  const collSlug = STATE.collSlug || gv('f-coll') || slugify(brand);
+  const collLabel = brand;
+  const name = gv('f-name') || 'Untitled product';
+  const seoTitle = gv('f-seo-title') || name;
+  const mpn = gv('f-mpn') || '—';
+  const isNew = STATE.condition === 'new';
+  const condLabel = isNew ? 'New' : 'Used';
+  const drive = STATE.drive || 'RHD';
+  const contactUrl = WHATSAPP_URL;
+  const warrantyMonths = Number(STATE.warrantyMonths || (isNew ? DEFAULT_WARRANTY_NEW : DEFAULT_WARRANTY_USED));
+  const returnsDays = Number(STATE.returnsDays || 14);
+  const badgeTax     = STATE.badgeTax || 'TAX inc.';
+  const badgeQuality = STATE.badgeQuality || (isNew ? DEFAULT_QUALITY_NEW : DEFAULT_QUALITY_USED);
+  const cta1 = STATE.cta1 || 'UK REG/VIN/CHASSIS Fitment';
+  const cta2 = STATE.cta2 || 'Coding & Support';
+  const cta3 = STATE.cta3 || (isNew ? DEFAULT_CTA3_NEW : DEFAULT_CTA3_USED);
+  const footerNote = STATE.footerNote || (isNew ? DEFAULT_FOOTER_NEW : DEFAULT_FOOTER_USED);
+  const descNote = gv('f-desc-note') || (isNew ? DEFAULT_DESC_NEW : DEFAULT_DESC_USED);
+  const intros = descNote.split(/\n{2,}|\r\n\r\n/).map(s=>s.trim()).filter(Boolean);
+  const introHtml = intros.length
+    ? intros.map(p => `      <p class="intro">${esc(p)}</p>`).join('\n')
+    : `      <p class="intro">${esc(descNote)}</p>`;
+
+  // images: hero = featured (or first), thumbs = rest
+  const imgs = STATE.images.slice();
+  const featuredIdx = Math.max(0, imgs.findIndex(i => i.featured));
+  const heroImg = imgs[featuredIdx] || imgs[0] || null;
+  const thumbImgs = imgs.filter((_, i) => i !== (heroImg ? imgs.indexOf(heroImg) : -1));
+  const galleryHtml = `
+  <div class="gallery">
+    ${heroImg
+      ? `<div class="hero" style="background-image:url('${esc(heroImg.uploadedUrl || heroImg.objectUrl)}')"></div>`
+      : `<div class="hero placeholder">No images uploaded — add some in the Images section</div>`}
+    ${thumbImgs.length
+      ? `<div class="thumbs">${thumbImgs.map(im => `<div class="t" style="background-image:url('${esc(im.uploadedUrl || im.objectUrl)}')"></div>`).join('')}</div>`
+      : ''}
+  </div>`;
+
+  const modulesHtml = STATE.modules.length
+    ? `\n  <div class="pn-lbl">Electronic module numbers</div>\n  <div class="chips">${STATE.modules.map(m=>`<span class="chip">${esc(m)}</span>`).join('')}</div>\n`
+    : '';
+  const oerefsHtml = STATE.oerefs.length
+    ? `\n  <div class="pn-lbl">OEM cross-reference numbers</div>\n  <div class="chips">${STATE.oerefs.map(m=>`<span class="chip">${esc(m)}</span>`).join('')}</div>\n`
+    : '';
+  const skipHtml = '';
+
+  const compatRowsHtml = STATE.compatRows
+    .filter(r => r.make || r.model)
+    .map(r => `        <tr>
+          <td>${esc(r.make||'')}</td>
+          <td>${esc(r.model||'')}</td>
+          <td>${esc(r.platform||'')}</td>
+          <td>${esc(r.years||'')}</td>
+          <td>${esc(r.drive||drive)}</td>
+        </tr>`).join('\n');
+
+  const compatBlock = compatRowsHtml ? `
+  <div class="rule mt-16"></div>
+
+  <div class="s-hd">
+    <h3>Vehicle compatibility</h3>
+  </div>
+
+  <div class="t-wrap">
+    <table class="ct">
+      <thead>
+        <tr>
+          <th>Make</th>
+          <th>Model</th>
+          <th>Chassis</th>
+          <th>Years</th>
+          <th>Drive</th>
+        </tr>
+      </thead>
+      <tbody>
+${compatRowsHtml}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note">Can't find your model? <a href="${esc(contactUrl)}">Send VIN via WhatsApp</a> — we'll confirm fast.</p>
+` : '';
+
+  const deliveryRowsHtml = STATE.deliveryRows
+    .filter(r => r.zone || r.rate)
+    .map(r => `        <tr><td>${esc(r.zone||'')}</td><td>${esc(r.rate||'')}</td><td>${esc(r.handling||'')}</td><td>${esc(r.transit||'')}</td></tr>`)
+    .join('\n');
+
+  const html = `<div class="pg">
+  <nav class="bc" aria-label="Breadcrumb">
+    <a href="https://powersteeringrackdirect.com">PSRD OEM Steering Racks</a><span class="bc-s">›</span>
+    <a href="https://powersteeringrackdirect.com/products-list/${esc(collSlug)}">${esc(collLabel)}</a><span class="bc-s">›</span>
+    <span>${esc(seoTitle)}</span>
+  </nav>
+${galleryHtml}
+  <div class="badges">
+    <span class="bdg b-tax">${esc(badgeTax)}</span>
+    <span class="bdg b-condition${isNew?' is-new':''}">${esc(STATE.badgeCondition || condLabel)}</span>
+    <span class="bdg b-tested">${esc(badgeQuality)}</span>
+    <span class="bdg b-drv${drive==='LHD'?' is-lhd':''}">${esc(STATE.badgeDrive || drive)}</span>
+    <span class="bdg b-war">${esc(warrantyMonths)}-M Warranty</span>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="s-hd mt-16">
+    <h2>Specification</h2>
+  </div>
+
+  <div class="pn-lbl">Manufacturer part number (MPN)</div>
+  <div class="chips"><span class="chip mpn">${esc(mpn)}</span></div>
+${modulesHtml}${oerefsHtml}${skipHtml}
+  <div class="description-note">
+${introHtml}
+  </div>
+
+  <div class="ctas">
+    <a href="${esc(contactUrl)}">${esc(cta1)}</a>
+    <a href="${esc(contactUrl)}">${esc(cta2)}</a>
+    <a class="primary" href="${esc(contactUrl)}">${esc(cta3)}</a>
+  </div>
+${compatBlock}
+  <div class="rule mt-16"></div>
+
+  <div class="s-hd">
+    <h3>Delivery &amp; returns</h3>
+  </div>
+
+  <div class="t-wrap">
+    <table class="ct">
+      <thead>
+        <tr>
+          <th>Zone</th>
+          <th>Standard rate</th>
+          <th>Handling</th>
+          <th>Transit</th>
+        </tr>
+      </thead>
+      <tbody>
+${deliveryRowsHtml || '        <tr><td colspan="4" style="text-align:center;color:var(--pg-ink-4)">No delivery zones configured</td></tr>'}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note">Buyer is responsible for all customs fees, import duties &amp; taxes.</p>
+  <p class="note">Express shipping available — <a href="${esc(contactUrl)}">contact us for a quote</a>.</p>
+  <p class="note">Returns accepted within ${returnsDays} days of receipt. Items must be in original condition. Return shipping is at the buyer's expense. Refunds processed within 7 business days. <a href="${esc(RETURNS_URL)}">Returns policy</a>.</p>
+  <p class="note">Warranty: ${warrantyMonths} months from date of purchase. Covers manufacturing defects, non-working or damaged parts. Does not cover mechanical damage, incorrect installation, or misuse.</p>
+  <p class="note">${esc(footerNote)}</p>
+</div>`;
+  return html;
+}
+function generateFullPreviewDoc(){
+  const inner = generateProductHtml();
+  return `<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(gv('f-seo-title')||gv('f-name')||'Product preview')}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${PRODUCT_CSS}</style></head><body>${inner}</body></html>`;
+}
+
+// ─────────────────────── preview / copy ───────────────────────
+let _previewMode = 'rendered';
+function setPreviewMode(mode){
+  _previewMode = mode;
+  document.querySelectorAll('#preview-mode-seg button').forEach(b=>{
+    b.classList.toggle('is-on', b.dataset.v === mode);
+  });
+  $('preview-frame').style.display  = mode === 'rendered' ? 'block' : 'none';
+  $('preview-content').style.display = mode === 'rendered' ? 'none' : 'block';
+}
+function previewProduct(){
+  const html = generateProductHtml();
+  const fullDoc = generateFullPreviewDoc();
+  $('preview-content').textContent = html;
+  const iframe = $('preview-frame');
+  iframe.srcdoc = fullDoc;
+  setPreviewMode('rendered');
+  openModal('preview-modal');
+}
+function openPreviewInNewTab(){
+  const fullDoc = generateFullPreviewDoc();
+  const blob = new Blob([fullDoc], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(()=>URL.revokeObjectURL(url), 30000);
+}
+function copyHtml(){
+  const html = generateProductHtml();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(html).then(
+      () => toast('HTML copied to clipboard', 'ok'),
+      () => fallbackCopy(html)
+    );
+  } else { fallbackCopy(html); }
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); toast('HTML copied','ok'); }
+  catch(e){ toast('Copy failed — select & copy manually','err'); }
+  document.body.removeChild(ta);
+}
+function publishProduct(){
+  openModal('publish-modal');
+  $('pub-title').textContent = 'Publishing…';
+  $('pub-sub').textContent = 'Please wait — this can take ~5 seconds.';
+  $('pub-close-btn').style.display = 'none';
+  [1,2,3,4].forEach(n => {
+    const d=$('step-dot-'+n), l=$('step-lbl-'+n); d.className='step-dot'; l.className='step-lbl';
+  });
+  let n = 0;
+  const tick = () => {
+    n++;
+    if (n>1) { $('step-dot-'+(n-1)).className='step-dot done'; $('step-dot-'+(n-1)).textContent='✓'; $('step-lbl-'+(n-1)).className='step-lbl done'; }
+    if (n>4) {
+      $('pub-title').textContent = 'Published';
+      $('pub-sub').textContent = 'Your product is live.';
+      $('pub-close-btn').style.display = 'flex';
+      return;
+    }
+    $('step-dot-'+n).className='step-dot active';
+    $('step-lbl-'+n).className='step-lbl active';
+    setTimeout(tick, 900);
+  };
+  setTimeout(tick, 300);
+}
+function undoState(){ toast('Undo (demo)', 'info'); }
+function redoState(){ toast('Redo (demo)', 'info'); }
+
+window.STATE = STATE;
+</script>
+</body>
+</html>

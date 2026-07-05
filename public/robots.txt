@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /cart
+Disallow: /checkout
+Disallow: /thank-you
+Disallow: /info-hub
+
+Sitemap: https://powersteeringrackdirect.com/sitemap.xml

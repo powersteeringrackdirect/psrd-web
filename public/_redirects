@@ -1,0 +1,5 @@
+# CF Pages SPA catch-all
+# Static files and CF Functions take priority over this rule.
+# Only truly unmatched routes fall through to index.html (React handles them).
+# Covers: /cart  /checkout  /thank-you  /customer-portal  etc.
+/* /index.html 200

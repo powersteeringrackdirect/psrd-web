@@ -1,0 +1,22 @@
+name = "psrd-sync"
+main = "index.js"
+compatibility_date = "2024-09-02"
+
+# Cron: daily backup sync at 03:00 UTC
+# Primary sync is webhook-driven (Stripe payment_intent.succeeded)
+[triggers]
+crons = ["0 3 * * *"]
+
+# Environment variables (non-secret)
+[vars]
+GHL_WORKER = "https://muddy-cloud-75ed.mike-83d.workers.dev"
+GHL_LOC    = "2SnelkrGrY0pBrSw0nUF"
+
+# STRIPE_WEBHOOK_SECRET is stored as a Wrangler secret (not here).
+# Set it by running:  wrangler secret put STRIPE_WEBHOOK_SECRET
+# (inside the psrd-sync/ folder)
+
+# KV namespace — REPLACE id with output from: wrangler kv:namespace create "PSRD_PRODUCTS"
+[[kv_namespaces]]
+binding = "PSRD_PRODUCTS"
+id      = "cdbcdbe9c809439caf8eabcb1d37298c"

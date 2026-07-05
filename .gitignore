@@ -1,0 +1,18 @@
+# Generated output — built by CI, never committed
+dist/
+
+# Node
+node_modules/
+package-lock.json
+
+# Wrangler
+.wrangler/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backups and junk
+*.save
+*.zip
+*.bak
